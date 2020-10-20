@@ -43,6 +43,7 @@ respose :
     "matchId": 1
 }
 
+
 2 . localhost:8080/addOver : add entry for new Over
 
 request :  {
@@ -50,6 +51,7 @@ request :  {
     "matchId": 1
 }
 response : will be on logs of app.
+
 
 3.  localhost:8080/changeInnings : whenever we need to change the batting team to start bolwing 
 
@@ -60,6 +62,9 @@ request :
     "teamName" : "Team 2",
     "matchId" :1
 }
+response : will be on logs of app.
+
+
 
 4. localhost:8080/addOver : add over for above team
 
@@ -67,5 +72,7 @@ request : {
     "over": ["6","1","W","W"],
     "matchId": 1
 }
+response : will be on logs of app.
+
 
 ```
