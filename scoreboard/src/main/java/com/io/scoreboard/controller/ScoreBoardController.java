@@ -43,7 +43,7 @@ public class ScoreBoardController {
         Match match = new Match(team, teamCreationDTO.getNoOfOvers());
 
         //sending overInfo to handler
-        MatchUtility.handleOver(teamCreationDTO.getOver(),match.getCurrentBattingTeam());
+        MatchUtility.handleOver(teamCreationDTO.getOver(),match.getCurrentBattingTeam(),match);
         PrintUtility.printScoreBoard(match);
 
         //get match Id act like primary key
@@ -61,21 +61,15 @@ public class ScoreBoardController {
     @RequestMapping(value = "/addOver", method = RequestMethod.POST)
     public void addOver(@RequestBody OverThrowDTO overThrowDTO) {
         //requester need to send the matchID that is come back from /setupTeams action.
-        if(overThrowDTO.getMatchId()==null)return;
+        if(overThrowDTO.getMatchId()==null || overThrowDTO.getOver()==null)return;
 
         Match match = matchRunningOn.get(overThrowDTO.getMatchId());
-        //if no of over still less then we decided then play.
+        if(match==null) return;
+
+        //if no of over still less that we decided then play.
         if(match.getNoOfOverDecided()>match.getCurrentBattingTeam().getOversPlayed().size())
         {
-            MatchUtility.handleOver(overThrowDTO.getOver(),match.getCurrentBattingTeam());
-        }else
-        {
-            PrintUtility.printScoreBoard(match);
-            if(match.getCurrentBattingTeam().getCurrentScore() < match.getScoreChase())
-                System.out.println(match.getTeams().get(0).getName()+" won the match by " + (match.getScoreChase()-match.getCurrentBattingTeam().getCurrentScore()));
-            else
-                System.out.println(match.getCurrentBattingTeam().getName()+" won the match by " + Math.abs(match.getScoreChase()-match.getCurrentBattingTeam().getCurrentScore()));
-            return;
+            MatchUtility.handleOver(overThrowDTO.getOver(),match.getCurrentBattingTeam(),match);
         }
         //printing it on console.
         PrintUtility.printScoreBoard(match);
@@ -87,18 +81,20 @@ public class ScoreBoardController {
      */
     @RequestMapping(value = "/changeInnings", method = RequestMethod.POST)
     public void addOver(@RequestBody ChangeInningsDTO changeInningsDTO) {
-        if(changeInningsDTO.getMatchId()==null)return;
+        if(changeInningsDTO.getMatchId()==null || changeInningsDTO.getOver() ==null || changeInningsDTO.getPlayerOrderTeam()==null)return;
         //taking playerInformation
         List<Player> players = new LinkedList<Player>();
         changeInningsDTO.getPlayerOrderTeam().stream().forEach(it->players.add(new Player(it)));
 
         Team teamB = new Team(players, changeInningsDTO.getTeamName());
         Match match = matchRunningOn.get(changeInningsDTO.getMatchId());
-        //adding othet team to match
+
+        if(match==null) return;
+        //adding other team to match
         match.getTeams().add(teamB);
         match.changeInnings();
 
-        MatchUtility.handleOver(changeInningsDTO.getOver(),match.getCurrentBattingTeam());
+        MatchUtility.handleOver(changeInningsDTO.getOver(),match.getCurrentBattingTeam(),match);
         PrintUtility.printScoreBoard(match);
     }
 

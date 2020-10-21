@@ -1,8 +1,10 @@
 package com.io.scoreboard.utils;
 
 import com.io.scoreboard.enumTypes.BallType;
+import com.io.scoreboard.exception.MatchEndException;
 import com.io.scoreboard.exception.NoPlayerException;
 import com.io.scoreboard.model.Ball;
+import com.io.scoreboard.model.Match;
 import com.io.scoreboard.model.Over;
 import com.io.scoreboard.model.Team;
 import org.apache.log4j.LogManager;
@@ -13,7 +15,7 @@ import java.util.List;
 public class MatchUtility {
     private static final Logger logger = LogManager.getLogger(MatchUtility.class);
 
-    public static void handleOver(List<String> run, Team currentBattingTeam) {
+    public static void handleOver(List<String> run, Team currentBattingTeam, Match match) {
         int bollPlayed = run.size();
         if (bollPlayed == 0) return;
 
@@ -27,10 +29,12 @@ public class MatchUtility {
                 } else {
                     handleNormalBalls(ballRun,over,currentBattingTeam);
                 }
+                if(match.getScoreChase()!=null && match.getScoreChase()<currentBattingTeam.getCurrentScore())
+                  throw new MatchEndException(currentBattingTeam.getName() + "wins");
             }
             currentBattingTeam.addOvers(over);
             currentBattingTeam.switchStriker();
-        } catch (NoPlayerException e) {
+        } catch (NoPlayerException | MatchEndException e) {
             logger.error(e.getMessage());
             currentBattingTeam.addOvers(over);
         }

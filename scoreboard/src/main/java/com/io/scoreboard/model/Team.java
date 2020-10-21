@@ -13,7 +13,7 @@ public class Team {
     private Player striker;
     private Player nonStriker;
     private List<Over> oversPlayed;
-    private Integer nextPlayer;
+    private Integer nextPlayerIndex;
     private String name;
 
     public Team(List<Player> playerList,String name) {
@@ -25,9 +25,8 @@ public class Team {
         currentScore = new Integer(0);
         striker= playerList.get(0);
         nonStriker = playerList.get(1);
-        isBatting = true;
         oversPlayed = new LinkedList<>();
-        nextPlayer =2;
+        nextPlayerIndex =2;
         this.name=name;
     }
 
@@ -37,10 +36,10 @@ public class Team {
 
     private Player nextPlayer()
     {
-        if(nextPlayer<playerList.size())
+        if(nextPlayerIndex <playerList.size())
         {
-            Player player = playerList.get(nextPlayer);
-            nextPlayer++;
+            Player player = playerList.get(nextPlayerIndex);
+            nextPlayerIndex++;
             return player;
         }
         return null;
