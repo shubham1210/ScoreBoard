@@ -24,7 +24,7 @@ public class MatchUtility {
         try {
             while (run.size() != 0) {
                 String ballRun = run.remove(0);
-                if (BallType.BALL_TYPE_SET.contains(ballRun)) {
+                if (BallType.isExtraBall(ballRun)) {
                     handleExtraBalls(ballRun,over,currentBattingTeam);
                 } else {
                     handleNormalBalls(ballRun,over,currentBattingTeam);
@@ -50,7 +50,7 @@ public class MatchUtility {
     private static void handleNormalBalls(String ballRun,Over over,Team currentBattingTeam) throws NoPlayerException
     {
         int score = Integer.parseInt(ballRun);
-        over.addBall(new Ball(BallType.NORMAL_BALL, score));
+        over.addBall(new Ball(BallType.NORMAL_BALL.getValue(), score));
         switch (score) {
             case 4: {
                 currentBattingTeam.getStriker().hitFour();
@@ -85,19 +85,20 @@ public class MatchUtility {
      */
     private static void handleExtraBalls(String ballRun,Over over,Team currentBattingTeam) throws NoPlayerException
     {
-        switch (ballRun) {
-            case BallType.NO_BALL: {
-                over.addBall(new Ball(BallType.NORMAL_BALL, 1));
+      BallType type = BallType.getFromString(ballRun);
+        switch (type) {
+            case NO_BALL: {
+                over.addBall(new Ball(BallType.NO_BALL.getValue(), 1));
                 currentBattingTeam.addToCurrentScore(1);
                 break;
             }
-            case BallType.WICKET_BALL: {
-                over.addBall(new Ball(BallType.WICKET_BALL, 0));
+            case WICKET_BALL: {
+                over.addBall(new Ball(BallType.WICKET_BALL.getValue(), 0));
                 currentBattingTeam.wicketDown();
                 break;
             }
-            case BallType.WIDE_BALL: {
-                over.addBall(new Ball(BallType.WIDE_BALL, 1));
+            case WIDE_BALL: {
+                over.addBall(new Ball(BallType.WIDE_BALL.getValue(), 1));
                 currentBattingTeam.addToCurrentScore(1);
                 break;
             }

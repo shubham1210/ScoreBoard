@@ -14,4 +14,5 @@ public class Ball {
         this.ballType = ballType;
         this.run = run;
     }
+
 }
